@@ -21,43 +21,67 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token=null;
 
-        if(request.getCookies() !=null){
-            for(Cookie cookie:request.getCookies()){
-                if("token".equals(cookie.getName()));
-                token=cookie.getValue();
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
+
+        String token = null;
+
+        // 1. Cookie se token lo
+        if (request.getCookies() != null) {
+
+            for (Cookie cookie : request.getCookies()) {
+
+                if ("token".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
             }
         }
+
+        // 2. Agar cookie me nahi mila to Authorization Header check karo
         if (token == null) {
+
             String header = request.getHeader("Authorization");
+
             if (header != null && header.startsWith("Bearer ")) {
                 token = header.substring(7);
             }
         }
 
-        if(token != null && jwtUtils.validate(token)){
+        // 3. Validate Token
+        if (token != null && jwtUtils.validate(token)) {
 
+            // Access Token hi allow karo
             if (!"access".equals(jwtUtils.extractType(token))) {
                 filterChain.doFilter(request, response);
                 return;
             }
-            String email=jwtUtils.getemail(token);
-            String role=jwtUtils.getRole(token);
 
-            request.setAttribute("email",email);
-            request.setAttribute("role",role);
+            String email = jwtUtils.getEmail(token);
+            String role = jwtUtils.getRole(token);
 
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(email,null, List.of(new SimpleGrantedAuthority("ROLE_"+role)));
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            email,
+                            null,
+                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    );
 
-            auth.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
+            authentication.setDetails(
+                    new WebAuthenticationDetailsSource()
+                            .buildDetails(request)
             );
 
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            SecurityContextHolder
+                    .getContext()
+                    .setAuthentication(authentication);
         }
-        filterChain.doFilter(request,response);
+
+        filterChain.doFilter(request, response);
     }
 }

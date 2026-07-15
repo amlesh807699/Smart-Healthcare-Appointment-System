@@ -6,77 +6,105 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+@Component
 public class JwtUtils {
 
     @Value("${jwt.issuer}")
-    private String ISSUER ;
-    @Value("${jwt.token-type}")
-    private String TOKEN_TYPE;
+    private String issuer;
 
     @Value("${jwt.secret}")
-
     private String secretKey;
 
-    @Value("${jwt.expiration}")
-    private long expirationMillis;
-   private Key getkey(){
-       return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-   }
+    private Key getKey() {
+        return Keys.hmacShaKeyFor(
+                secretKey.getBytes(StandardCharsets.UTF_8)
+        );
+    }
 
-   public String accesstoken(String role,String email){
-       return GenrateToken(role,email,"access",15 * 60 * 1000);
-   }
+    // Access Token
+    public String accessToken(String role, String email) {
 
-   public String refresh(String role,String email){
-       return GenrateToken(role,email,"refresh",7L * 24 * 60 * 60 * 1000);
-   }
+        return generateToken(
+                role,
+                email,
+                "access",
+                15 * 60 * 1000
+        );
+    }
 
-   public String GenrateToken(String role,String email,String TOKEN_TYPE,long exp){
-       Date now = new Date();
+    // Refresh Token
+    public String refreshToken(String role, String email) {
 
-       return Jwts.builder()
-               .setSubject(email)
-               .setIssuer(ISSUER)
-               .setIssuedAt(now)
-               .setExpiration(new Date(now.getTime() + exp))
-               .claim("role",role)
-               .claim("typ",TOKEN_TYPE)
-               .signWith(getkey(), SignatureAlgorithm.HS256)
-               .compact();
+        return generateToken(
+                role,
+                email,
+                "refresh",
+                7L * 24 * 60 * 60 * 1000
+        );
+    }
 
-   }
+    private String generateToken(
+            String role,
+            String email,
+            String type,
+            long expiration
+    ) {
 
-   private Claims getclain(String token){
-       return Jwts.parserBuilder()
-               .setSigningKey(getkey())
-               .build()
-               .parseClaimsJws(token)
-               .getBody();
+        Date now = new Date();
 
-   }
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuer(issuer)
+                .setIssuedAt(now)
+                .setExpiration(
+                        new Date(now.getTime() + expiration)
+                )
+                .claim("role", role)
+                .claim("typ", type)
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
 
-   public String getRole(String token){
-       return getclain(token).get("role",String.class);
-   }
+    private Claims getClaims(String token) {
 
-   public String getemail(String token){
-       return getclain(token).getSubject();
-   }
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 
-   public Boolean validate(String token){
-       try {
-           getclain(token);
-           return true;
-       }catch (JwtException e){
-           return false;
-       }
-   }
+    public String getEmail(String token) {
+        return getClaims(token).getSubject();
+    }
+
+    public String getRole(String token) {
+        return getClaims(token)
+                .get("role", String.class);
+    }
+
     public String extractType(String token) {
-        return getclain(token).get("type", String.class);
+        return getClaims(token)
+                .get("typ", String.class);
+    }
+
+    public boolean validate(String token) {
+
+        try {
+
+            getClaims(token);
+
+            return true;
+
+        } catch (JwtException | IllegalArgumentException e) {
+
+            return false;
+        }
     }
 }
