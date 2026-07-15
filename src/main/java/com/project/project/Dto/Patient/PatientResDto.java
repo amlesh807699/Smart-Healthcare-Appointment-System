@@ -1,19 +1,19 @@
-package com.project.project.Entity;
+package com.project.project.Dto.Patient;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.project.project.Entity.Appointment;
+import com.project.project.Entity.Report;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import org.mapstruct.Mapper;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Patient {
+@Mapper(componentModel = "Spring")
+public class PatientResDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
     private String profilepic;
     private String firstName;
@@ -52,6 +52,4 @@ public class Patient {
             cascade = CascadeType.ALL
     )
     private List<Report> reports;
-
-
 }

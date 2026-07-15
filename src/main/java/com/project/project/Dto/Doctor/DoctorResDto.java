@@ -1,18 +1,14 @@
-package com.project.project.Entity;
+package com.project.project.Dto.Doctor;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Doctor {
+public class DoctorResDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String profilepic;
@@ -41,20 +37,10 @@ public class Doctor {
 
     private String city;
 
-    private String licenseNumber;
 
     private String availableDays;
 
     private String availableTime;
 
     private Double consultationFee;
-
-
-    @OneToMany(
-            mappedBy = "doctor",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
-    private List<Appointment> appointments;
-
 }

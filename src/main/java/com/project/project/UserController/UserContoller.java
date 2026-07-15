@@ -1,14 +1,11 @@
 package com.project.project.UserController;
 
 
-import com.project.project.Dto.UserReqDto;
-import com.project.project.Dto.UserResDto;
-import com.project.project.Entity.User;
+import com.project.project.Dto.User.UserReqDto;
+import com.project.project.Dto.User.UserResDto;
 import com.project.project.Serivce.UserServices;
 import jakarta.validation.Valid;
-import org.mapstruct.Mapping;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

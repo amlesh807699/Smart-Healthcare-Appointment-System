@@ -1,20 +1,16 @@
-package com.project.project.Entity;
+package com.project.project.Dto.Patient;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Patient {
+public class PatientReqDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String profilepic;
     private String firstName;
 
@@ -43,15 +39,4 @@ public class Patient {
     private String allergies;
 
     private String insuranceNumber;
-
-    @OneToMany( mappedBy = "patient", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private List<Appointment> appointments;
-    @OneToMany(
-            mappedBy = "patient",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL
-    )
-    private List<Report> reports;
-
-
 }

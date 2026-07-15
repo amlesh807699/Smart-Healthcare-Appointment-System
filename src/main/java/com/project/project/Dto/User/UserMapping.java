@@ -1,10 +1,8 @@
-package com.project.project.Dto;
+package com.project.project.Dto.User;
 
 import com.project.project.Entity.User;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
