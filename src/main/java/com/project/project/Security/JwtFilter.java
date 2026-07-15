@@ -53,7 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-        // 3. Validate Token
+
         if (token != null && jwtUtils.validate(token)) {
 
             // Access Token hi allow karo
