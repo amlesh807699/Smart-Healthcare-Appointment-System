@@ -43,9 +43,7 @@ public class PatientSerivce {
     }
 
 //    private PatientResDto updateprofile(Long id,PatientReqDto patientReqDto){
-//        Patient patient=patientRepo.findById(id).orElse(null);
-//        patie
-//    }
+
 
     private List<DoctorResDto> serach (String name,String specialization,String city){
         List<Doctor> doctorList=doctorrepo.findByNameAndSpecializationAndCity(name,specialization,city);
