@@ -8,14 +8,10 @@ import com.project.project.Dto.Doctor.DoctorResDto;
 import com.project.project.Dto.Patient.PatientMapping;
 import com.project.project.Dto.Patient.PatientReqDto;
 import com.project.project.Dto.Patient.PatientResDto;
-import com.project.project.Entity.Appointment;
-import com.project.project.Entity.Doctor;
-import com.project.project.Entity.Patient;
-import com.project.project.Entity.User;
-import com.project.project.Repo.AppointmentRepo;
-import com.project.project.Repo.Doctorrepo;
-import com.project.project.Repo.PatientRepo;
-import com.project.project.Repo.UserRepo;
+import com.project.project.Dto.Report.ReportMapper;
+import com.project.project.Dto.Report.ReportResDto;
+import com.project.project.Entity.*;
+import com.project.project.Repo.*;
 import com.project.project.UserSerivce.UserSerivce;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,52 +31,110 @@ public class PatientSerivce {
     private final AppointmentMapper appointmentMapper;
     private final UserSerivce userSerivce;
     private final UserRepo userRepo;
+    private final ReportMapper reportMapper;
+    private final ReportRepo reportRepo;
+    private final AppointmentStatus appointmentStatus;
 
-    private PatientResDto profile(PatientReqDto patientReqDto){
-        Patient patient=patientMapping.ToEntity(patientReqDto);
-         Patient saved=patientRepo.save(patient);
-         return patientMapping.toDto(saved);
+    public PatientResDto addProfile(PatientReqDto dto){
+
+        User user=userSerivce.getCurrentUser();
+
+        Patient patient=patientMapping.toEntity(dto);
+
+        patient.setUser(user);
+
+        Patient saved=patientRepo.save(patient);
+
+        return patientMapping.toDto(saved);
     }
 
 //    private PatientResDto updateprofile(Long id,PatientReqDto patientReqDto){
 
 
-    private List<DoctorResDto> serach (String name,String specialization,String city){
+    private List<DoctorResDto> searchDoctor (String name,String specialization,String city){
         List<Doctor> doctorList=doctorrepo.findByNameAndSpecializationAndCity(name,specialization,city);
-        return doctorMapping.DTO_LIST(doctorList);
+        return doctorMapping.toDtoList(doctorList);
     }
 
-    private DoctorResDto byid(Long id){
+    private DoctorResDto searchbyid(Long id){
         Doctor doctor=doctorrepo.findById(id).orElse(null);
         return doctorMapping.toDto(doctor);
     }
     private List<DoctorResDto> all(){
         List<Doctor> doctor=doctorrepo.findAll();
-        return doctorMapping.DTO_LIST(doctor);
+        return doctorMapping.toDtoList(doctor);
     }
 
-    private AppointmentResDto book (AppointmentReqDto appointmentReqDto){
-        Appointment appointment=appointmentMapper.ToEntity(appointmentReqDto);
-        Appointment saved=appointmentRepo.save(appointment);
-        return appointmentMapper.ToDto(saved);
-    }
+    public AppointmentResDto book(AppointmentReqDto dto){
 
-    private AppointmentResDto allap(){
         User user=userSerivce.getCurrentUser();
-        Patient patient=patientRepo.findByUser(user).orElse(null);
-        Appointment appointment=appointmentRepo.findByPatient(patient).orElse(null);
-        return appointmentMapper.ToDto(appointment);
+
+        Patient patient=patientRepo.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        Doctor doctor=doctorrepo.findById(dto.getDoctorId())
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+        Appointment appointment=appointmentMapper.toEntity(dto);
+
+        appointment.setPatient(patient);
+        appointment.setDoctor(doctor);
+        appointment.setStatus(AppointmentStatus.BOOKED);
+
+        Appointment saved=appointmentRepo.save(appointment);
+
+        return appointmentMapper.toDto(saved);
+
     }
 
-    private AppointmentResDto byids(Long id){
-        Appointment appointment=appointmentRepo.findById(id).orElse(null);
-        return appointmentMapper.ToDto(appointment);
+    public List<AppointmentResDto> getAllAppointments() {
+
+        User user = userSerivce.getCurrentUser();
+
+        Patient patient = patientRepo.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        List<Appointment> appointments = appointmentRepo.findByPatient(patient);
+
+        return appointmentMapper.toDto(appointments);
+    }
+
+    public AppointmentResDto getAppointmentById(Long id) {
+
+        User user = userSerivce.getCurrentUser();
+
+        Patient patient = patientRepo.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        Appointment appointment = appointmentRepo.findByIdAndPatient(id, patient)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        return appointmentMapper.toDto(appointment);
     }
 
     private String dlete(Long id){
         Appointment appointment=appointmentRepo.findById(id).orElse(null);
+        appointmentRepo.delete(appointment);
         return "apPoinmentes delted";
     }
+
+    private List<ReportResDto> getAllReports() {
+
+        User user = userSerivce.getCurrentUser();
+
+        Patient patient = patientRepo.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        List<Report> reports = reportRepo.findByPatient(patient);
+
+        return reportMapper.toDto(reports);
+    }
+
+    private ReportResDto byidss(Long id){
+        Report report=reportRepo.findById(id).orElse(null);
+        return reportMapper.ToDto(report);
+    }
+
 
 
 

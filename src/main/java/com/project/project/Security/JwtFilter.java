@@ -43,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-        // 2. Agar cookie me nahi mila to Authorization Header check karo
+        // 2. Agar cookie me nahi mila to Authorization Header
         if (token == null) {
 
             String header = request.getHeader("Authorization");

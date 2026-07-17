@@ -53,5 +53,9 @@ public class Patient {
     )
     private List<Report> reports;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", unique = true)
+    private User user;
+
 
 }

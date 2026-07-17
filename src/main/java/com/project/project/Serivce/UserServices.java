@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public abstract class UserServices implements UserSerivce{
+public abstract class UserServices{
     private final UserRepo userRepo;
     private UserMapping userMapping;
 
