@@ -17,7 +17,6 @@ public class DoctorResDto {
 
     private String lastName;
 
-    private String email;
 
     private String phoneNumber;
 

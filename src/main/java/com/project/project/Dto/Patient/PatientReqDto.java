@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public class PatientReqDto {
 
     private String profilepic;
+
     private String firstName;
 
     private String lastName;
@@ -39,4 +40,5 @@ public class PatientReqDto {
     private String allergies;
 
     private String insuranceNumber;
+
 }

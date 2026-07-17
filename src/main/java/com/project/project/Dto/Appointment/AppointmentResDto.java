@@ -9,23 +9,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AppointmentResDto {
-    private Long id;
-
+    private Long doctorId;
 
     private LocalDateTime appointmentDateTime;
 
-
     private String reason;
-
 
     private String symptoms;
 
-
-    private String status;
-
-
     private String notes;
-
-
-    private LocalDateTime createdAt;
 }

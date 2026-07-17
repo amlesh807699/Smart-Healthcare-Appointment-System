@@ -3,9 +3,13 @@ package com.project.project.Dto.Patient;
 import com.project.project.Entity.Patient;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "Spring")
+import java.util.List;
+
+@Mapper(componentModel = "spring")
 public interface PatientMapping {
 
-    Patient ToEntity(PatientReqDto patientReqDto);
+    Patient toEntity(PatientReqDto dto);
+
     PatientResDto toDto(Patient patient);
+    List<PatientResDto> tolistdto(List<Patient> patients);
 }

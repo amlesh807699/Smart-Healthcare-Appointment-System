@@ -22,7 +22,6 @@ public class ReportReqDto {
 
     private String status;
 
-    private String doctorName;
 
     private String labName;
 }

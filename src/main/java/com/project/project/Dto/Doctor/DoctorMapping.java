@@ -8,9 +8,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface DoctorMapping {
 
-    Doctor toEntity(DoctorReqDto doctorReqDto);
+    Doctor toEntity(DoctorReqDto dto);
 
     DoctorResDto toDto(Doctor doctor);
 
-    List<DoctorResDto> DTO_LIST(List<Doctor> doctors);
+    List<DoctorResDto> toDtoList(List<Doctor> doctors);
 }

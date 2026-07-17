@@ -11,20 +11,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AppointmentReqDto {
 
-    private LocalDateTime appointmentDateTime;
+    private Long doctorId;
 
+    private LocalDateTime appointmentDateTime;
 
     private String reason;
 
-
     private String symptoms;
-
-
-    private String status;
-
 
     private String notes;
 
-
-    private LocalDateTime createdAt;
 }
