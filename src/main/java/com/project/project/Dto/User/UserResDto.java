@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class UserResDto {
-
     private Long id;
 
     private String name;
@@ -18,4 +17,6 @@ public class UserResDto {
     private Role role;
 
     private Boolean verified;
+
+    private Boolean profileCompleted;
 }

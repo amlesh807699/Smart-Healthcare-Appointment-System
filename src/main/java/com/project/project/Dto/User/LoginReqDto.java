@@ -1,19 +1,11 @@
 package com.project.project.Dto.User;
 
-import com.project.project.Entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class UserReqDto {
-
-    @NotBlank
-    private String name;
-
-    @NotBlank
-    private String surname;
+public class LoginReqDto {
 
     @Email
     @NotBlank
@@ -22,6 +14,4 @@ public class UserReqDto {
     @NotBlank
     private String password;
 
-    @NotNull
-    private Role role;
 }

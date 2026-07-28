@@ -41,9 +41,8 @@ public class SecurityCongif {
 
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/auth/**").permitAll()
-                          .requestMatchers("/admin/**").hasRole("ADMIN")
-                           .requestMatchers("/teacher/**").hasRole("TEACHER")
-                .requestMatchers("/student/**").hasRole("STUDENT")
+                          .requestMatchers("/doctor/**").hasRole("DOCTOR")
+                           .requestMatchers("/patient/**").hasRole("PATIENT")
                 .anyRequest().authenticated());
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

@@ -27,6 +27,8 @@ public class Payment {
 
     private String paymentType;
 
-
+    @OneToOne
+    @JoinColumn(name = "appointment_id")
+    private Appointment appointment;
 
 }

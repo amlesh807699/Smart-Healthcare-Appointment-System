@@ -44,6 +44,8 @@ public class Patient {
 
     private String insuranceNumber;
 
+
+
     @OneToMany( mappedBy = "patient", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<Appointment> appointments;
     @OneToMany(

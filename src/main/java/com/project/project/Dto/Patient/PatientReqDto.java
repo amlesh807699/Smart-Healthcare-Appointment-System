@@ -11,13 +11,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class PatientReqDto {
 
-    private String profilepic;
+
 
     private String firstName;
 
     private String lastName;
 
-    private String email;
 
     private String phoneNumber;
 

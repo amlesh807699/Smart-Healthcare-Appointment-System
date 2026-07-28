@@ -1,5 +1,6 @@
 package com.project.project.Serivce;
 
+import com.project.project.CloudNairy.CloudinaryService;
 import com.project.project.Dto.Appointment.AppoinmentStatusReqDto;
 import com.project.project.Dto.Appointment.AppointmentMapper;
 import com.project.project.Dto.Appointment.AppointmentResDto;
@@ -16,6 +17,7 @@ import com.project.project.Repo.*;
 import com.project.project.UserSerivce.UserSerivce;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.print.Doc;
 import java.util.List;
@@ -33,9 +35,10 @@ public class DoctorSerivce {
     private final UserRepo userRepo;
     private final ReportMapper reportMapper;
     private final ReportRepo reportRepo;
+    private final CloudinaryService cloudinaryService;
 
 
-    public DoctorResDto addProfile(DoctorReqDto doctorReqDto) {
+    public DoctorResDto addProfile(DoctorReqDto doctorReqDto , MultipartFile profilepic) {
 
         User user = userSerivce.getCurrentUser();
 
@@ -48,9 +51,11 @@ public class DoctorSerivce {
         }
 
         Doctor doctor = doctorMapping.toEntity(doctorReqDto);
-
+        String img=cloudinaryService.uploadImage(profilepic);
+        doctor.setProfilepic(img);
         doctor.setUser(user);
-
+        user.setProfileCompleted(true);
+        userRepo.save(user);
         Doctor saved = doctorrepo.save(doctor);
 
         return doctorMapping.toDto(saved);
@@ -127,13 +132,13 @@ public class DoctorSerivce {
         return reportMapper.ToDto(saved);
     }
 
-    public void deleteReport(Long id) {
-
+    public String deleteReport(Long id) {
+           User user=userSerivce.getCurrentUser();
         Report report = reportRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Report not found"));
 
         reportRepo.delete(report);
-
+        return "report delted";
     }
 
     public List<ReportResDto> patientReport(Long id) {

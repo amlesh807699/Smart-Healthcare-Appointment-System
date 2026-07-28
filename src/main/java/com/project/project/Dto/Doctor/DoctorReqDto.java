@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DoctorReqDto {
 
-    private String profilepic;
 
     private String firstName;
 
