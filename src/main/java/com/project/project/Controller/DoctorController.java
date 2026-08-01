@@ -24,10 +24,21 @@ import java.util.List;
 public class DoctorController {
 
     private final DoctorSerivce doctorSerivce;
-    @PostMapping(value = "/add/profile" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<DoctorResDto> addprofile( @Valid  @RequestBody DoctorReqDto doctorReqDto, @RequestPart(value = "profilepic" ,required = true) MultipartFile profilepic){
-        DoctorResDto doctorResDto=doctorSerivce.addProfile(doctorReqDto, profilepic);
-        return ResponseEntity.status(HttpStatus.CREATED)
+
+    @PostMapping(
+            value = "/add/profile",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<DoctorResDto> addprofile(
+            @Valid @RequestPart("doctor") DoctorReqDto doctorReqDto,
+            @RequestPart(value = "profilepic", required = true) MultipartFile profilepic
+    ) {
+
+        DoctorResDto doctorResDto =
+                doctorSerivce.addProfile(doctorReqDto, profilepic);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
                 .body(doctorResDto);
     }
 

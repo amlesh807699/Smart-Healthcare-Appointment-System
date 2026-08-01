@@ -1,9 +1,6 @@
 package com.project.project.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +22,7 @@ public class User {
     private String surname;
     private String email;
     private String password;
+    @Enumerated(EnumType.STRING)
     private Role role;
     @NotNull
     private Boolean verified = false;

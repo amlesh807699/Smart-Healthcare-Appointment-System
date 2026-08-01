@@ -34,7 +34,7 @@ public class JwtUtils {
                 role,
                 email,
                 "access",
-                15 * 60 * 1000
+                7 * 24 * 60 * 60
         );
     }
 

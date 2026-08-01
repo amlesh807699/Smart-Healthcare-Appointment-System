@@ -36,13 +36,13 @@ public class AuthService {
                 userReqDto.getEmail(),
                 userReqDto.getRole());
 
-        if (userRepo.findByEmail(userReqDto.getEmail()).isPresent()) {
-
-            log.warn("REGISTER FAILED | Email already exists | email={}",
-                    userReqDto.getEmail());
-
-            throw new RuntimeException("Email already exists");
-        }
+//        if (userRepo.findByEmail(userReqDto.getEmail()).isPresent()) {
+//
+//            log.warn("REGISTER FAILED | Email already exists | email={}",
+//                    userReqDto.getEmail());
+//
+//            throw new RuntimeException("Email already exists");
+//        }
 
         if (userReqDto.getRole() != Role.DOCTOR &&
                 userReqDto.getRole() != Role.PATIENT) {

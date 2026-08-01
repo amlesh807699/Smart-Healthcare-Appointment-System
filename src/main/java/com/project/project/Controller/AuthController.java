@@ -1,6 +1,7 @@
 package com.project.project.Controller;
 
 import com.project.project.Dto.User.LoginReqDto;
+import com.project.project.Dto.User.LoginResDto;
 import com.project.project.Dto.User.UserReqDto;
 import com.project.project.Dto.User.UserResDto;
 import com.project.project.Entity.User;
@@ -11,10 +12,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -47,38 +49,82 @@ public class AuthController {
     }
 
     // ================= LOGIN =================
-
     @PostMapping("/login")
     public ResponseEntity<String> login(
             @Valid @RequestBody LoginReqDto loginReqDto,
-            HttpServletResponse response) {
+            HttpServletResponse response
+    ) {
+
+        log.info("LOGIN REQUEST | email={}", loginReqDto.getEmail());
+
 
         User user = authService.login(loginReqDto);
 
+
+        log.info("USER LOGIN SUCCESS | id={} role={}",
+                user.getId(),
+                user.getRole()
+        );
+
+
         String accessToken = jwtUtils.accessToken(
                 user.getRole().name(),
-                user.getEmail());
+                user.getEmail()
+        );
+
 
         String refreshToken = jwtUtils.refreshToken(
                 user.getRole().name(),
-                user.getEmail());
+                user.getEmail()
+        );
+
+
+        log.info("ACCESS TOKEN GENERATED | length={}",
+                accessToken.length()
+        );
+
+        log.info("REFRESH TOKEN GENERATED | length={}",
+                refreshToken.length()
+        );
+
+
 
         Cookie accessCookie = new Cookie("token", accessToken);
         accessCookie.setHttpOnly(true);
+        accessCookie.setSecure(false);
         accessCookie.setPath("/");
-        accessCookie.setMaxAge(15 * 60);
+        accessCookie.setMaxAge(7 * 24 * 60 * 60);
+
+
 
         Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
         refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(false);
         refreshCookie.setPath("/");
         refreshCookie.setMaxAge(7 * 24 * 60 * 60);
+
+
 
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
 
+
+        log.info("ACCESS COOKIE ADDED | name={} | httpOnly={} | maxAge={}",
+                accessCookie.getName(),
+                accessCookie.isHttpOnly(),
+                accessCookie.getMaxAge()
+        );
+
+
+        log.info("REFRESH COOKIE ADDED | name={} | httpOnly={} | maxAge={}",
+                refreshCookie.getName(),
+                refreshCookie.isHttpOnly(),
+                refreshCookie.getMaxAge()
+        );
+
+
         return ResponseEntity.ok("Login Successful");
     }
-
     // ================= REFRESH TOKEN =================
 
     @PostMapping("/refresh")

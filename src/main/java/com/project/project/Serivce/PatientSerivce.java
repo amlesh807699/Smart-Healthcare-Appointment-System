@@ -13,6 +13,7 @@ import com.project.project.UserSerivce.UserSerivce;
 
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class PatientSerivce{
 
 
@@ -97,12 +99,52 @@ public class PatientSerivce{
     @Transactional(readOnly = true)
     public PatientResDto getMyProfile(){
 
+        log.info("GET PROFILE REQUEST START");
 
-        Patient patient=getCurrentPatient();
+        User user = userService.getCurrentUser();
+
+        if(user == null){
+            log.error("CURRENT USER NOT FOUND");
+            throw new RuntimeException("User not authenticated");
+        }
+
+        log.info("CURRENT USER FOUND | id={} | email={} | role={}",
+                user.getId(),
+                user.getEmail(),
+                user.getRole()
+        );
 
 
-        return patientMapping.toDto(patient);
+        Patient patient = patientRepo.findByUser(user).orElse(null);
 
+
+        if(patient == null){
+
+            log.error("PATIENT PROFILE NOT FOUND | userId={}",
+                    user.getId()
+            );
+
+            throw new RuntimeException("Patient profile not found");
+        }
+
+
+        log.info("PATIENT FOUND | patientId={} | firstName={} | lastName={}",
+                patient.getId(),
+                patient.getFirstName(),
+                patient.getLastName()
+        );
+
+
+        PatientResDto dto = patientMapping.toDto(patient);
+
+
+        log.info("PATIENT DTO CREATED SUCCESSFULLY");
+
+
+        log.info("GET PROFILE REQUEST END");
+
+
+        return dto;
     }
 
 

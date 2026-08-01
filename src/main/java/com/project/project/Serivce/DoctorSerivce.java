@@ -37,28 +37,74 @@ public class DoctorSerivce {
     private final ReportRepo reportRepo;
     private final CloudinaryService cloudinaryService;
 
+    public DoctorResDto addProfile(DoctorReqDto doctorReqDto, MultipartFile profilepic) {
 
-    public DoctorResDto addProfile(DoctorReqDto doctorReqDto , MultipartFile profilepic) {
+        // Step 1: DTO check
+        System.out.println("1. DTO DATA: " + doctorReqDto);
+
 
         User user = userSerivce.getCurrentUser();
+
+        // Step 2: Current user check
+        System.out.println("2. CURRENT USER: " + user);
+
 
         if (user.getRole() != Role.DOCTOR) {
             throw new RuntimeException("Access Denied");
         }
 
+
         if (doctorrepo.findByUser(user).isPresent()) {
             throw new RuntimeException("Doctor profile already exists");
         }
 
+
+        // Step 3: DTO to Entity mapping check
         Doctor doctor = doctorMapping.toEntity(doctorReqDto);
-        String img=cloudinaryService.uploadImage(profilepic);
+
+        System.out.println("3. ENTITY AFTER MAPPING: " + doctor);
+
+
+        // Step 4: Image upload check
+        String img = cloudinaryService.uploadImage(profilepic);
+
+        System.out.println("4. CLOUDINARY IMAGE URL: " + img);
+
+
         doctor.setProfilepic(img);
+
+        // Step 5: After profile pic set
+        System.out.println("5. AFTER PROFILE PIC: " + doctor);
+
+
         doctor.setUser(user);
+
+        // Step 6: After user set
+        System.out.println("6. AFTER USER SET: " + doctor);
+
+
         user.setProfileCompleted(true);
         userRepo.save(user);
+
+
+        // Step 7: Before save database
+        System.out.println("7. BEFORE DATABASE SAVE: " + doctor);
+
+
         Doctor saved = doctorrepo.save(doctor);
 
-        return doctorMapping.toDto(saved);
+
+        // Step 8: After save
+        System.out.println("8. SAVED DOCTOR: " + saved);
+
+
+        DoctorResDto response = doctorMapping.toDto(saved);
+
+        // Step 9: Final response
+        System.out.println("9. RESPONSE DTO: " + response);
+
+
+        return response;
     }
 
 
